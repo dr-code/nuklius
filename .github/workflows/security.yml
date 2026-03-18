@@ -38,8 +38,8 @@ jobs:
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
 
-      # github/codeql-action/upload-sarif@v3.27.0
-      - uses: github/codeql-action/upload-sarif@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+      # github/codeql-action/upload-sarif@v4
+      - uses: github/codeql-action/upload-sarif@603b797f8b14b413fe025cd935a91c16c4782713
         if: always()
         with:
           sarif_file: semgrep.sarif
@@ -65,17 +65,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      # github/codeql-action/init@v3.27.0
-      - uses: github/codeql-action/init@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+      # github/codeql-action/init@v4
+      - uses: github/codeql-action/init@603b797f8b14b413fe025cd935a91c16c4782713
         with:
           languages: javascript, typescript
           queries: security-and-quality
 
-      # github/codeql-action/autobuild@v3.27.0
-      - uses: github/codeql-action/autobuild@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+      # github/codeql-action/autobuild@v4
+      - uses: github/codeql-action/autobuild@603b797f8b14b413fe025cd935a91c16c4782713
 
-      # github/codeql-action/analyze@v3.27.0
-      - uses: github/codeql-action/analyze@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+      # github/codeql-action/analyze@v4
+      - uses: github/codeql-action/analyze@603b797f8b14b413fe025cd935a91c16c4782713
         with:
           category: codeql
           output: security-reports/codeql.sarif
@@ -272,8 +272,8 @@ jobs:
       - name: Create security-reports directory
         run: mkdir -p security-reports
 
-      # aquasecurity/trivy-action@v0.19.0
-      - uses: aquasecurity/trivy-action@62f8c5c00c74cfd87a7c462fc60b0b5b61c2fae8
+      # aquasecurity/trivy-action@0.35.0
+      - uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
           scan-type: fs
           scan-ref: .
@@ -283,8 +283,8 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
 
-      # github/codeql-action/upload-sarif@v3.27.0
-      - uses: github/codeql-action/upload-sarif@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+      # github/codeql-action/upload-sarif@v4
+      - uses: github/codeql-action/upload-sarif@603b797f8b14b413fe025cd935a91c16c4782713
         if: always()
         with:
           sarif_file: security-reports/trivy.sarif
