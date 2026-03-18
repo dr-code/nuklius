@@ -234,10 +234,10 @@ None — Sprint 1 is foundation only. No user-visible features.
 |------|-------|
 | Upstream remote | PENDING |
 | TRILIUM_VERSION tag | `v0.95.0` (latest stable as of 2026-03-18; confirmed via `git tag -l` after `git fetch upstream --tags`) |
-| Integration branch | PENDING |
-| Merge commit SHA | PENDING |
-| PR URL | PENDING |
-| Merge to main SHA | PENDING |
+| Integration branch | `upstream-merge/v0.95.0` |
+| Merge commit SHA | `d6c6cc368` (merge) + `0c23e0e3e` (lockfile update) |
+| PR URL | https://github.com/dr-code/nuklius/pull/1 |
+| Merge to main SHA | PENDING — merge PR after CI passes |
 
 ### CI Run Evidence
 
@@ -257,10 +257,10 @@ None — Sprint 1 is foundation only. No user-visible features.
 
 | Setting | Value |
 |---------|-------|
-| Required reviews | PENDING |
-| Required status checks | PENDING — exact job names to be verified from workflow files |
-| Force-push blocked | PENDING |
-| Configured date | PENDING |
+| Required reviews | 1 approving review minimum |
+| Required status checks | `repro-build`, `sast-semgrep`, `sast-codeql`, `sast-eslint`, `dependency-audit`, `license-policy`, `secrets-scan`, `container-fs-scan`, `dast-zap` (verified from `.github/workflows/` job definitions) |
+| Force-push blocked | Yes |
+| Configured date | PENDING — configure after PR merge |
 
 ### Sprint 1 Closure Statement
 
