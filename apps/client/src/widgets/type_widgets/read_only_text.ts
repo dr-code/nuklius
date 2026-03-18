@@ -6,6 +6,7 @@ import { getLocaleById } from "../../services/i18n.js";
 import appContext from "../../components/app_context.js";
 import { getMermaidConfig } from "../../services/mermaid.js";
 import { renderMathInElement } from "../../services/math.js";
+import { renderMarkers, removeMarkers } from "../../services/nuklius/block_markers.js";
 
 const TPL = /*html*/`
 <div class="note-detail-readonly-text note-detail-printable" tabindex="100">
@@ -93,6 +94,8 @@ export default class ReadOnlyTextTypeWidget extends AbstractTextTypeWidget {
     }
 
     cleanup() {
+        const el = this.$content[0] as HTMLElement | undefined;
+        if (el) removeMarkers(el);
         this.$content.html("");
     }
 
@@ -107,6 +110,12 @@ export default class ReadOnlyTextTypeWidget extends AbstractTextTypeWidget {
         const blob = await note.getBlob();
 
         this.$content.html(blob?.content ?? "");
+
+        // Render block markers for addressable blocks.
+        const contentEl = this.$content[0] as HTMLElement | undefined;
+        if (contentEl && this.noteId) {
+            renderMarkers(contentEl, this.noteId);
+        }
 
         this.$content.find("a.reference-link").each((_, el) => {
             this.loadReferenceLinkTitle($(el));

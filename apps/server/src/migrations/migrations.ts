@@ -6,6 +6,22 @@
 
 // Migrations should be kept in descending order, so the latest migration is first.
 const MIGRATIONS: (SqlMigration | JsMigration)[] = [
+    // Sprint 3: block addressing — nuklius_blocks index table
+    {
+        version: 233,
+        sql: /*sql*/`
+            CREATE TABLE IF NOT EXISTS nuklius_blocks (
+                noteId      TEXT NOT NULL,
+                blockId     TEXT NOT NULL,
+                blockOrdinal INTEGER NOT NULL,
+                preview     TEXT NOT NULL DEFAULT '',
+                utcDateModified TEXT NOT NULL,
+                PRIMARY KEY (noteId, blockId)
+            );
+            CREATE INDEX IF NOT EXISTS IDX_nuklius_blocks_noteId_ordinal
+                ON nuklius_blocks (noteId, blockOrdinal);
+        `
+    },
     // Remove embedding tables since LLM embedding functionality has been removed
     {
         version: 232,

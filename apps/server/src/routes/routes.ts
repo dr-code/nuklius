@@ -58,6 +58,7 @@ import ollamaRoute from "./api/ollama.js";
 import openaiRoute from "./api/openai.js";
 import anthropicRoute from "./api/anthropic.js";
 import llmRoute from "./api/llm.js";
+import nukliusBlocksRoute from "./api/nuklius_blocks.js";
 import systemInfoRoute from "./api/system_info.js";
 
 import etapiAuthRoutes from "../etapi/auth.js";
@@ -368,6 +369,12 @@ function register(app: express.Application) {
     etapiSpecRoute.register(router);
     etapiBackupRoute.register(router);
     etapiMetricsRoute.register(router);
+
+    // Nuklius block addressing
+    apiRoute(GET, "/api/nuklius/blocks/:noteId/map", nukliusBlocksRoute.getBlockMap);
+    apiRoute(GET, "/api/nuklius/blocks/:noteId/ordinal/:n", nukliusBlocksRoute.resolveOrdinal);
+    apiRoute(GET, "/api/nuklius/blocks/:noteId/id/:blockId", nukliusBlocksRoute.resolveBlockId);
+    asyncApiRoute(PST, "/api/nuklius/blocks/rebuild", nukliusBlocksRoute.triggerRebuild);
 
     // LLM Chat API
     asyncApiRoute(PST, "/api/llm/chat", llmRoute.createSession);

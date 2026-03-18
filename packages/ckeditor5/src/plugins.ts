@@ -27,7 +27,9 @@ import "@triliumnext/ckeditor5-math/index.css";
 import CodeBlockToolbar from "./plugins/code_block_toolbar.js";
 import CodeBlockLanguageDropdown from "./plugins/code_block_language_dropdown.js";
 import MoveBlockUpDownPlugin from "./plugins/move_block_updown.js";
-import ScrollOnUndoRedoPlugin from "./plugins/scroll_on_undo_redo.js"
+import ScrollOnUndoRedoPlugin from "./plugins/scroll_on_undo_redo.js";
+import MedicalCalloutPlugin from "./plugins/nuklius/medical_callout.js";
+import NukliusBlockIdPlugin from "./plugins/nuklius/block_id.js";
 
 /**
  * Plugins that are specific to Trilium and not part of the CKEditor 5 core, included in both text editors but not in the attribute editor.
@@ -48,7 +50,9 @@ const TRILIUM_PLUGINS: typeof Plugin[] = [
     CodeBlockLanguageDropdown,
     CodeBlockToolbar,
     MoveBlockUpDownPlugin,
-	ScrollOnUndoRedoPlugin
+	ScrollOnUndoRedoPlugin,
+    MedicalCalloutPlugin,
+    NukliusBlockIdPlugin
 ];
 
 /**

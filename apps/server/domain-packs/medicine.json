@@ -1,0 +1,32 @@
+{
+  "id": "medicine",
+  "name": "Medicine",
+  "version": "1.0.0",
+  "profession": "medicine",
+  "callouts": [
+    {
+      "type": "pearl",
+      "label": "Pearl",
+      "color": "#0d9488",
+      "description": "High-yield clinical insight or exam tip"
+    },
+    {
+      "type": "warning",
+      "label": "Warning",
+      "color": "#d97706",
+      "description": "Hazard, contraindication, or safety alert"
+    },
+    {
+      "type": "mnemonic",
+      "label": "Mnemonic",
+      "color": "#7c3aed",
+      "description": "Memory aid or recall device"
+    },
+    {
+      "type": "tip",
+      "label": "Tip",
+      "color": "#16a34a",
+      "description": "Practical bedside or workflow tip"
+    }
+  ]
+}

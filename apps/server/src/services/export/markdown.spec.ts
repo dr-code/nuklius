@@ -342,4 +342,28 @@ describe("Markdown export", () => {
         expect(markdownExportService.toMarkdown(html)).toBe(expected);
     });
 
+    describe("Block ID preservation (nuklius-block-id round-trip)", () => {
+        it("keeps raw HTML for elements with data-nuklius-block-id", () => {
+            const html = '<p data-nuklius-block-id="abc-123">Hello world</p>';
+            const result = markdownExportService.toMarkdown(html);
+            // The keep() rule outputs the raw HTML element including the attribute.
+            expect(result).toContain('data-nuklius-block-id="abc-123"');
+        });
+
+        it("does not affect elements without block IDs", () => {
+            const html = "<p>Normal paragraph</p>";
+            const result = markdownExportService.toMarkdown(html);
+            // Plain paragraphs should still convert to clean markdown text.
+            expect(result).toBe("Normal paragraph");
+        });
+
+        it("preserves block IDs across export/import round-trip", () => {
+            const html = '<p data-nuklius-block-id="round-trip-id">Content to preserve</p>';
+            const exported = markdownExportService.toMarkdown(html);
+            // The exported output should include the raw HTML attribute.
+            expect(exported).toContain('data-nuklius-block-id="round-trip-id"');
+        });
+    });
+
+
 });
