@@ -53,7 +53,7 @@ jobs:
           category: semgrep
 
       # actions/upload-artifact@v4.4.0
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: always()
         with:
           name: semgrep-${{ github.run_id }}
@@ -88,7 +88,7 @@ jobs:
           output: security-reports/codeql.sarif
 
       # actions/upload-artifact@v4.4.0
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: always()
         with:
           name: codeql-${{ github.run_id }}
@@ -141,7 +141,7 @@ jobs:
           fi
 
       # actions/upload-artifact@v4.4.0
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: always()
         with:
           name: eslint-security-${{ github.run_id }}
@@ -214,7 +214,7 @@ jobs:
           fi
 
       # actions/upload-artifact@v4.4.0
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: always()
         with:
           name: dependency-audit-${{ github.run_id }}
@@ -248,7 +248,7 @@ jobs:
         run: pnpm run license-check
 
       # actions/upload-artifact@v4.4.0
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: always()
         with:
           name: license-policy-${{ github.run_id }}
@@ -276,7 +276,7 @@ jobs:
           config-path: .gitleaks.toml
 
       # actions/upload-artifact@v4.4.0
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: always()
         with:
           name: gitleaks-${{ github.run_id }}
@@ -318,7 +318,7 @@ jobs:
           category: trivy
 
       # actions/upload-artifact@v4.4.0
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: always()
         with:
           name: trivy-${{ github.run_id }}
@@ -391,7 +391,7 @@ jobs:
         continue-on-error: true  # Remove after Trilium fork merge — see TODO above
 
       # actions/upload-artifact@v4.4.0
-      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: always()
         with:
           name: zap-${{ github.run_id }}
