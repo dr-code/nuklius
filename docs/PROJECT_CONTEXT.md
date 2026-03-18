@@ -18,7 +18,8 @@
 |--------|--------|------|-------|
 | Sprint 1 — Fork Baseline + Security CI | **CLOSED** | Pre-Gate A | TriliumNext/Notes v0.95.0 merged (PR #1); branch protection active; ETAPI_TOKEN set |
 | Sprint 2 — Medical Callouts + Domain Packs | **CLOSED** | — | Domain pack loader, MedicalCalloutPlugin, nuklius-callouts.css. See docs/SPRINT-02.md |
-| Sprint 3 — Block Addressing | **READY TO START** | — | Use Sprint 3 prompt in docs/SPRINT-02.md |
+| Sprint 3 — Block Addressing | **CLOSED** | — | NukliusBlockId plugin, nuklius_blocks table (migration 233), block_parser/block_index/API, client ^N markers, markdown round-trip. See docs/SPRINT-03.md |
+| Sprint 4 — Deep-Link Navigation + Block Citation UI | **READY TO START** | — | Use Sprint 4 prompt in docs/SPRINT-03.md |
 | ... | ... | — | |
 | Sprint 7 | Not started | Gate A | No-AI baseline complete |
 | Sprint 12 | Not started | Gate B | AI runtime stable |
@@ -34,6 +35,7 @@
 | Security gates, scanner contracts, ETAPI auth | `docs/SECURITY_BASELINE.md` |
 | Sprint 1 runbook, fork setup, CI evidence | `docs/SPRINT-01.md` |
 | Sprint 2 runbook, callout system, Sprint 3 prompt | `docs/SPRINT-02.md` |
+| Sprint 3 runbook, block addressing, Sprint 4 prompt | `docs/SPRINT-03.md` |
 | Domain pack JSON schema, loader, extensibility | `docs/DOMAIN_PACKS.md` |
 | CKEditor callout plugin, CSS design, roundtrip | `docs/MEDICAL_CALLOUTS.md` |
 | CKEditor premium licensing policy | `docs/CKEDITOR_LICENSING.md` |
