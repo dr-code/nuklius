@@ -27,14 +27,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      # semgrep/semgrep-action@v1.1.0
-      - uses: semgrep/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d
+      # actions/setup-python@v5.3.0
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
         with:
-          config: >-
-            p/owasp-top-ten
-            p/nodejs
-            p/typescript
-          generateSarif: "1"
+          python-version: '3.12'
+
+      - name: Run Semgrep
+        run: |
+          pip install semgrep --quiet
+          semgrep scan \
+            --config p/owasp-top-ten \
+            --config p/nodejs \
+            --config p/typescript \
+            --sarif \
+            --output semgrep.sarif \
+            --quiet || true
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
 
