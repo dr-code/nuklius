@@ -183,8 +183,8 @@ jobs:
             echo "WARN: pnpm audit found ${HIGH} High vulnerabilities in production deps (inherited Trilium — see TODO)"
           fi
 
-      # google/osv-scanner-action@v2.3.3
-      - uses: google/osv-scanner-action@c5996e0193a3df57d695c1b8a1dec2a4c62e8730
+      # google/osv-scanner-action@v1.8.2
+      - uses: google/osv-scanner-action@7ac94f9d40028db4cacf8d53adec6626f5d3d2f7
         with:
           scan-args: |-
             --output=security-reports/osv.json
