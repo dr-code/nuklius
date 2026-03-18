@@ -7,6 +7,7 @@ import froca from "../../services/froca.js";
 import noteCreateService from "../../services/note_create.js";
 import AbstractTextTypeWidget from "./abstract_text_type_widget.js";
 import link from "../../services/link.js";
+import { renderMarkers, removeMarkers } from "../../services/nuklius/block_markers.js";
 import appContext, { type CommandListenerData, type EventData } from "../../components/app_context.js";
 import dialogService from "../../services/dialog.js";
 import options from "../../services/options.js";
@@ -278,6 +279,18 @@ export default class EditableTextTypeWidget extends AbstractTextTypeWidget {
 
             editor.model.document.on("change:data", () => this.spacedUpdate.scheduleUpdate());
 
+            // Refresh block markers after each data change (throttled to ~1s to avoid keystroke lag).
+            let markerRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+            editor.model.document.on("change:data", () => {
+                if (markerRefreshTimer !== null) clearTimeout(markerRefreshTimer);
+                markerRefreshTimer = setTimeout(() => {
+                    const editable = this.$editor.find(".ck-editor__editable")[0] as HTMLElement | undefined;
+                    if (editable && this.noteId) {
+                        renderMarkers(editable, this.noteId);
+                    }
+                }, 1000);
+            });
+
             if (glob.isDev && ENABLE_INSPECTOR) {
                 const CKEditorInspector = (await import("@ckeditor/ckeditor5-inspector")).default;
                 CKEditorInspector.attach(editor);
@@ -333,6 +346,13 @@ export default class EditableTextTypeWidget extends AbstractTextTypeWidget {
                 this.watchdog.editor?.setData(data);
             }
         });
+
+        // Render block markers after content loads.
+        await this.initialized;
+        const editable = this.$editor.find(".ck-editor__editable")[0] as HTMLElement | undefined;
+        if (editable && this.noteId) {
+            renderMarkers(editable, this.noteId);
+        }
     }
 
     getData() {
@@ -372,6 +392,9 @@ export default class EditableTextTypeWidget extends AbstractTextTypeWidget {
     }
 
     cleanup() {
+        const editable = this.$editor.find(".ck-editor__editable")[0] as HTMLElement | undefined;
+        if (editable) removeMarkers(editable);
+
         if (this.watchdog?.editor) {
             this.spacedUpdate.allowUpdateWithoutChange(() => {
                 this.watchdog.editor?.setData("");

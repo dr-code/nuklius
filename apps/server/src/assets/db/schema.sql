@@ -152,3 +152,13 @@ CREATE TABLE IF NOT EXISTS sessions (
     data TEXT,
     expires INTEGER
 );
+
+CREATE TABLE IF NOT EXISTS nuklius_blocks (
+    noteId      TEXT NOT NULL,
+    blockId     TEXT NOT NULL,
+    blockOrdinal INTEGER NOT NULL,
+    preview     TEXT NOT NULL DEFAULT '',
+    utcDateModified TEXT NOT NULL,
+    PRIMARY KEY (noteId, blockId)
+);
+CREATE INDEX IDX_nuklius_blocks_noteId_ordinal ON nuklius_blocks (noteId, blockOrdinal);

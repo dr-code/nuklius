@@ -57,6 +57,19 @@ function toMarkdown(content: string) {
         instance.addRule("li", buildListItemFilter());
         instance.use(gfm);
         instance.keep([ "kbd" ]);
+        // Preserve elements with data-nuklius-block-id as raw HTML so the attribute
+        // survives the export → markdown → import round-trip.
+        // Must use addRule (not keep()) so it takes priority over the default paragraph rule.
+        // Duck-type getAttribute — Node.js has no global HTMLElement.
+        instance.addRule("nukliusBlockId", {
+            filter(node: Node) {
+                return typeof (node as any).getAttribute === "function" &&
+                    !!(node as any).getAttribute("data-nuklius-block-id");
+            },
+            replacement(_content: string, node: Node) {
+                return "\n\n" + (node as any).outerHTML + "\n\n";
+            }
+        });
     }
 
     return instance.turndown(content);

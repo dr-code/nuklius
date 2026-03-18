@@ -1,0 +1,76 @@
+/* ================================================================
+   nuklius-block-markers.css
+   Styles for the ^N block address markers rendered by block_markers.ts.
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   Marker anchor
+   ---------------------------------------------------------------- */
+.nuklius-block-marker {
+    display: inline-block;
+    position: relative;
+    margin-right: 0.35em;
+    padding: 0 0.28em;
+    font-size: 0.68em;
+    font-weight: 600;
+    line-height: 1.4;
+    vertical-align: middle;
+    color: var(--muted-text-color, #888);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+    /* Keep markers out of the print flow */
+    print-color-adjust: exact;
+}
+
+/* Show on hover / keyboard focus */
+.nuklius-block-marker:hover,
+.nuklius-block-marker:focus-visible {
+    color: var(--link-color, #1a73e8);
+    background: var(--accented-background-color, rgba(26, 115, 232, 0.08));
+    border-color: var(--link-color, #1a73e8);
+    outline: none;
+}
+
+/* Active / pressed state */
+.nuklius-block-marker:active {
+    background: var(--link-color, #1a73e8);
+    color: #fff;
+}
+
+/* ----------------------------------------------------------------
+   Block highlight on scroll-to
+   ---------------------------------------------------------------- */
+.nuklius-block-highlight {
+    animation: nuklius-block-flash 1.8s ease-out forwards;
+}
+
+@keyframes nuklius-block-flash {
+    0%   { background-color: var(--link-color, #1a73e8); opacity: 0.22; }
+    40%  { background-color: var(--link-color, #1a73e8); opacity: 0.15; }
+    100% { background-color: transparent; opacity: 1; }
+}
+
+/* ----------------------------------------------------------------
+   Print: hide markers
+   ---------------------------------------------------------------- */
+@media print {
+    .nuklius-block-marker {
+        display: none !important;
+    }
+}
+
+/* ----------------------------------------------------------------
+   Compact mode — reduce visual weight when content is dense
+   ---------------------------------------------------------------- */
+.note-detail-readonly-text .nuklius-block-marker {
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.note-detail-readonly-text:hover .nuklius-block-marker,
+.note-detail-readonly-text .nuklius-block-marker:focus-visible {
+    opacity: 1;
+}

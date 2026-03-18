@@ -140,3 +140,10 @@ export interface NoteRow {
     content?: string | Buffer;
 }
 
+export interface NukliusBlockRow {
+    noteId: string;
+    blockId: string;
+    blockOrdinal: number;
+    preview: string;
+    utcDateModified: string;
+}

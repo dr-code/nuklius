@@ -19,6 +19,7 @@ import eventService from "./services/events.js";
 import log from "./services/log.js";
 import "./services/handlers.js";
 import "./becca/becca_loader.js";
+import "./services/nuklius/block_index_listener.js";
 import { RESOURCE_DIR } from "./services/resource_dir.js";
 
 export default async function buildApp() {

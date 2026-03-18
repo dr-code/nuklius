@@ -136,6 +136,9 @@ function renderToHtml(content: string, title: string) {
     html = importUtils.handleH1(html, title);
     html = htmlSanitizer.sanitize(html);
 
+    // Note: nuklius block IDs (data-nuklius-block-id) survive round-trips because
+    // the export keeps addressed elements as raw HTML, and the sanitizer allows data-*.
+
     // Add a trailing semicolon to CSS styles.
     html = html.replaceAll(/(<(img|figure|col).*?style=".*?)"/g, "$1;\"");
 

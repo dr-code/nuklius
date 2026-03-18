@@ -246,6 +246,8 @@ export function parseNavigationStateFromUrl(url: string | undefined) {
                 searchString = value; // supports triggering search from URL, e.g. #?searchString=blabla
             } else if (["viewMode", "attachmentId"].includes(name)) {
                 (viewScope as any)[name] = value;
+            } else if (name === "blockId" || name === "block") {
+                (viewScope as any)[name] = value;
             } else {
                 console.warn(`Unrecognized hash parameter '${name}'.`);
             }

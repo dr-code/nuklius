@@ -70,6 +70,10 @@ declare module "ckeditor5" {
         clipboard?: {
             copy(text: string): void;
         },
+        nukliusBlockId?: {
+            /** Set to false to disable ID assignment (IDs will still round-trip via converters). Default: true. */
+            enabled?: boolean;
+        },
         medicalCallout?: {
             types?: Array<{
                 type: string;
