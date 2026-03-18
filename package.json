@@ -1,0 +1,128 @@
+{
+  "name": "nuklius",
+  "version": "0.95.0",
+  "description": "Local-first PKM + learning system for physicians — fork of TriliumNext/Notes v0.95.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "directories": {
+    "doc": "docs"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "client:test": "nx test client",
+    "client:build": "nx build client",
+    "client:coverage": "nx test client --coverage",
+    "server:test": "nx test server",
+    "server:build": "nx build server",
+    "server:coverage": "nx test server --coverage",
+    "server:start": "nx run server:serve",
+    "server:start-prod": "nx run server:start-prod",
+    "electron:build": "nx build desktop",
+    "chore:ci-update-nightly-version": "tsx ./scripts/update-nightly-version.ts",
+    "chore:generate-openapi": "tsx ./scripts/generate-openapi.ts",
+    "chore:update-build-info": "tsx ./scripts/update-build-info.ts",
+    "chore:update-version": "tsx ./scripts/update-version.ts",
+    "test:all": "pnpm test:parallel && pnpm test:sequential",
+    "test:parallel": "pnpm nx run-many -t test --all --exclude=server,ckeditor5-mermaid,ckeditor5-math --parallel",
+    "test:sequential": "pnpm nx run-many -t test --projects=server,ckeditor5-mermaid,ckeditor5-math --parallel=1",
+    "coverage": "pnpm nx run-many -t coverage",
+    "repro-build": "bash scripts/ci/repro-build.sh",
+    "smoke-launch": "bash scripts/smoke/launch-smoke.sh",
+    "smoke-etapi": "bash scripts/smoke/etapi-crud-smoke.sh",
+    "security-scan": "bash scripts/ci/security-scan.sh",
+    "license-check": "bash scripts/ci/license-policy-check.sh"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "4.0.1",
+    "@nx/devkit": "21.2.0",
+    "@nx/esbuild": "21.2.0",
+    "@nx/eslint": "21.2.0",
+    "@nx/eslint-plugin": "21.2.0",
+    "@nx/express": "21.2.0",
+    "@nx/js": "21.2.0",
+    "@nx/node": "21.2.0",
+    "@nx/playwright": "21.2.0",
+    "@nx/vite": "21.2.0",
+    "@nx/web": "21.2.0",
+    "@playwright/test": "^1.36.0",
+    "@triliumnext/server": "workspace:*",
+    "@types/express": "^5.0.0",
+    "@types/node": "22.15.31",
+    "@vitest/coverage-v8": "^3.0.5",
+    "@vitest/ui": "^3.0.0",
+    "chalk": "5.4.1",
+    "cross-env": "7.0.3",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^10.0.0",
+    "eslint-plugin-playwright": "^2.0.0",
+    "eslint-plugin-security": "^3.0.1",
+    "happy-dom": "~18.0.0",
+    "jiti": "2.4.2",
+    "jsdom": "~26.1.0",
+    "jsonc-eslint-parser": "^2.1.0",
+    "nx": "21.2.0",
+    "react-refresh": "^0.17.0",
+    "rollup-plugin-webpack-stats": "2.0.7",
+    "tslib": "^2.3.0",
+    "tsx": "4.20.3",
+    "typescript": "~5.8.0",
+    "typescript-eslint": "^8.19.0",
+    "upath": "2.0.1",
+    "vite": "^6.0.0",
+    "vite-plugin-dts": "~4.5.0",
+    "vitest": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dr-code/nuklius.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dr-code/nuklius/issues"
+  },
+  "homepage": "https://github.com/dr-code/nuklius#readme",
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac",
+  "pnpm": {
+    "patchedDependencies": {
+      "@ckeditor/ckeditor5-mention": "patches/@ckeditor__ckeditor5-mention.patch",
+      "@ckeditor/ckeditor5-code-block": "patches/@ckeditor__ckeditor5-code-block.patch",
+      "ckeditor5": "patches/ckeditor5.patch",
+      "@nx/js": "patches/@nx__js.patch"
+    },
+    "overrides": {
+      "node-abi": "4.9.0",
+      "mermaid": "11.6.0",
+      "preact": "10.26.9",
+      "roughjs": "4.6.6",
+      "@types/express-serve-static-core": "5.0.6",
+      "flat@<5.0.1": ">=5.0.1",
+      "debug@>=3.2.0 <3.2.7": ">=3.2.7",
+      "nanoid@<3.3.8": ">=3.3.8",
+      "nanoid@>=4.0.0 <5.0.9": ">=5.0.9",
+      "dompurify@<3.2.4": ">=3.2.4",
+      "esbuild@<=0.24.2": ">=0.25.0"
+    },
+    "ignoredBuiltDependencies": [
+      "sqlite3"
+    ],
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@scarf/scarf",
+      "better-sqlite3",
+      "bufferutil",
+      "core-js-pure",
+      "electron",
+      "electron-winstaller",
+      "esbuild",
+      "fs-xattr",
+      "macos-alias",
+      "nx",
+      "utf-8-validate"
+    ]
+  },
+  "nx": {
+    "name": "nuklius"
+  }
+}

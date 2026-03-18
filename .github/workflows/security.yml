@@ -1,0 +1,375 @@
+name: Security Scans
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly full scan on Mondays at 02:00 UTC
+    - cron: '0 2 * * 1'
+
+permissions:
+  contents: read
+  security-events: write  # Required for SARIF upload to GitHub Security tab
+  actions: read
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SAST: Semgrep
+  # ─────────────────────────────────────────────────────────────────────────────
+  sast-semgrep:
+    name: SAST — Semgrep
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      # semgrep/semgrep-action@v1.1.0
+      - uses: semgrep/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d
+        with:
+          config: >-
+            p/owasp-top-ten
+            p/nodejs
+            p/typescript
+          generateSarif: "1"
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+      # github/codeql-action/upload-sarif@v3.27.0
+      - uses: github/codeql-action/upload-sarif@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+        if: always()
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
+
+      # actions/upload-artifact@v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        if: always()
+        with:
+          name: semgrep-${{ github.run_id }}
+          path: semgrep.sarif
+          retention-days: 90
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SAST: CodeQL
+  # ─────────────────────────────────────────────────────────────────────────────
+  sast-codeql:
+    name: SAST — CodeQL
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      # github/codeql-action/init@v3.27.0
+      - uses: github/codeql-action/init@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+        with:
+          languages: javascript, typescript
+          queries: security-and-quality
+
+      # github/codeql-action/autobuild@v3.27.0
+      - uses: github/codeql-action/autobuild@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+
+      # github/codeql-action/analyze@v3.27.0
+      - uses: github/codeql-action/analyze@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+        with:
+          category: codeql
+          output: security-reports/codeql.sarif
+
+      # actions/upload-artifact@v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        if: always()
+        with:
+          name: codeql-${{ github.run_id }}
+          path: security-reports/codeql.sarif
+          retention-days: 90
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SAST: eslint-plugin-security
+  # ─────────────────────────────────────────────────────────────────────────────
+  sast-eslint:
+    name: SAST — eslint-plugin-security
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      # actions/setup-node@v4.1.0
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable corepack
+        run: corepack enable && corepack prepare --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run eslint-plugin-security
+        run: |
+          mkdir -p security-reports
+          pnpm eslint \
+            --plugin security \
+            --rule 'security/detect-object-injection: error' \
+            --rule 'security/detect-non-literal-regexp: error' \
+            --rule 'security/detect-non-literal-require: error' \
+            --rule 'security/detect-possible-timing-attacks: error' \
+            --rule 'security/detect-unsafe-regex: error' \
+            --format json \
+            --output-file security-reports/eslint-security.json \
+            "apps/**/*.ts" "packages/**/*.ts" || true
+          # Exit nonzero if any errors found
+          if jq -e '.[].messages | map(select(.severity == 2)) | length > 0' security-reports/eslint-security.json > /dev/null 2>&1; then
+            echo "ERROR: eslint-plugin-security found error-level violations"
+            jq '.[].messages | map(select(.severity == 2))' security-reports/eslint-security.json
+            exit 1
+          fi
+
+      # actions/upload-artifact@v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        if: always()
+        with:
+          name: eslint-security-${{ github.run_id }}
+          path: security-reports/eslint-security.json
+          retention-days: 90
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Dependency: pnpm audit + OSV-Scanner
+  # ─────────────────────────────────────────────────────────────────────────────
+  dependency-audit:
+    name: Dependency Audit (pnpm + OSV)
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      # actions/setup-node@v4.1.0
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable corepack
+        run: corepack enable && corepack prepare --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: pnpm audit
+        run: |
+          mkdir -p security-reports
+          pnpm audit --json > security-reports/pnpm-audit.json || true
+          # Gate: fail on critical or high
+          if jq -e '.metadata.vulnerabilities | (.critical + .high) > 0' security-reports/pnpm-audit.json > /dev/null 2>&1; then
+            echo "ERROR: pnpm audit found Critical or High vulnerabilities"
+            jq '.metadata.vulnerabilities' security-reports/pnpm-audit.json
+            exit 1
+          fi
+
+      # google/osv-scanner-action@v1.8.2
+      - uses: google/osv-scanner-action@1a47f31dcd7ec8ba5e18bfe2bb8d4c3ca4deb0cc
+        with:
+          scan-args: |-
+            --output=security-reports/osv.json
+            --format=json
+            ./
+        continue-on-error: true
+
+      - name: Check OSV results
+        run: |
+          if [ -f security-reports/osv.json ]; then
+            CRITICAL=$(jq '[.results[].packages[].vulnerabilities[] | select(.database_specific.severity == "CRITICAL")] | length' security-reports/osv.json 2>/dev/null || echo 0)
+            HIGH=$(jq '[.results[].packages[].vulnerabilities[] | select(.database_specific.severity == "HIGH")] | length' security-reports/osv.json 2>/dev/null || echo 0)
+            if [ "${CRITICAL}" -gt 0 ] || [ "${HIGH}" -gt 0 ]; then
+              echo "ERROR: OSV-Scanner found Critical=${CRITICAL} High=${HIGH} vulnerabilities"
+              exit 1
+            fi
+          fi
+
+      # actions/upload-artifact@v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        if: always()
+        with:
+          name: dependency-audit-${{ github.run_id }}
+          path: |
+            security-reports/pnpm-audit.json
+            security-reports/osv.json
+          retention-days: 90
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # License Policy
+  # ─────────────────────────────────────────────────────────────────────────────
+  license-policy:
+    name: License Policy (AGPL-compatible)
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      # actions/setup-node@v4.1.0
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable corepack
+        run: corepack enable && corepack prepare --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check licenses
+        run: pnpm run license-check
+
+      # actions/upload-artifact@v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        if: always()
+        with:
+          name: license-policy-${{ github.run_id }}
+          path: security-reports/licenses*.json
+          retention-days: 90
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Secrets: Gitleaks — Zero Tolerance
+  # ─────────────────────────────────────────────────────────────────────────────
+  secrets-scan:
+    name: Secrets Scan (Gitleaks — zero tolerance)
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0  # Full history required for git log scan
+
+      # gitleaks/gitleaks-action@v2.3.4
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+        with:
+          config-path: .gitleaks.toml
+
+      # actions/upload-artifact@v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        if: always()
+        with:
+          name: gitleaks-${{ github.run_id }}
+          path: results.sarif
+          retention-days: 90
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Container/FS Scan: Trivy
+  # ─────────────────────────────────────────────────────────────────────────────
+  container-fs-scan:
+    name: Container/FS Scan (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Create security-reports directory
+        run: mkdir -p security-reports
+
+      # aquasecurity/trivy-action@v0.19.0
+      - uses: aquasecurity/trivy-action@62f8c5c00c74cfd87a7c462fc60b0b5b61c2fae8
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: security-reports/trivy.sarif
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+          ignore-unfixed: true
+
+      # github/codeql-action/upload-sarif@v3.27.0
+      - uses: github/codeql-action/upload-sarif@f09c1c0a46b326c31cf5a0e2b6b0b5b9c1a0c6a3
+        if: always()
+        with:
+          sarif_file: security-reports/trivy.sarif
+          category: trivy
+
+      # actions/upload-artifact@v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        if: always()
+        with:
+          name: trivy-${{ github.run_id }}
+          path: security-reports/trivy.sarif
+          retention-days: 90
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DAST: OWASP ZAP Baseline
+  # ─────────────────────────────────────────────────────────────────────────────
+  dast-zap:
+    name: DAST — OWASP ZAP Baseline
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      # actions/setup-node@v4.1.0
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable corepack
+        run: corepack enable && corepack prepare --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Start Trilium server (if present)
+        run: |
+          mkdir -p logs security-reports
+          if [ -d apps/server ]; then
+            TRILIUM_DATA_DIR=/tmp/nuklius-zap-$$ TRILIUM_PORT=8080 \
+              pnpm --filter @trilium/server start &
+            # Poll readiness
+            for i in $(seq 1 30); do
+              if curl -sf http://localhost:8080 -o /dev/null 2>/dev/null; then
+                echo "Server ready after ${i}*2s"
+                break
+              fi
+              sleep 2
+            done
+          else
+            echo "WARN: apps/server not present — ZAP scan will target empty port (expected in Sprint 1)"
+            # Start a minimal stub so ZAP has something to scan
+            python3 -m http.server 8080 --directory . &
+            sleep 2
+          fi
+
+      # TODO Sprint 1: continue-on-error=true because Trilium server is not yet present
+      # in this repo. MUST be changed to continue-on-error: false once the Trilium fork
+      # is merged (Sprint 1 runbook Step 0) and the server passes the launch smoke test.
+      # Tracked in docs/SPRINT-01.md acceptance tests.
+      - name: ZAP baseline scan — server root
+        # zaproxy/action-baseline@v0.13.0
+        uses: zaproxy/action-baseline@0f9a2f7e5bd24a2e07b8c5ed0dff6f6ce15c0d40
+        with:
+          target: 'http://localhost:8080'
+          rules_file_name: '.zap/rules.conf'
+          cmd_options: '-j'
+          issue_title: 'ZAP Baseline - Server Root'
+        continue-on-error: true  # Remove after Trilium fork merge — see TODO above
+
+      - name: ZAP baseline scan — ETAPI routes
+        uses: zaproxy/action-baseline@0f9a2f7e5bd24a2e07b8c5ed0dff6f6ce15c0d40
+        with:
+          target: 'http://localhost:8080/etapi/'
+          rules_file_name: '.zap/rules.conf'
+          cmd_options: '-j'
+          issue_title: 'ZAP Baseline - ETAPI'
+        continue-on-error: true  # Remove after Trilium fork merge — see TODO above
+
+      # actions/upload-artifact@v4.4.0
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        if: always()
+        with:
+          name: zap-${{ github.run_id }}
+          path: |
+            report_html.html
+            report_json.json
+            zap-baseline-results*.json
+          retention-days: 90

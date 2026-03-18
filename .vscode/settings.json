@@ -1,0 +1,32 @@
+{
+    "editor.formatOnSave": false,
+    "files.eol": "\n",
+    "i18n-ally.sourceLanguage": "en",
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.localesPaths": [
+        "apps/server/src/assets/translations",
+        "apps/client/src/translations"
+    ],
+    "npm.exclude": [
+        "**/dist",
+    ],
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+    },
+    "github-actions.workflows.pinned.workflows": [
+        ".github/workflows/nightly.yml"
+    ],
+    "typescript.validate.enable": true,
+    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true
+}

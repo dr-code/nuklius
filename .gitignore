@@ -1,4 +1,10 @@
-# Environment & Secrets
+# Workaround for Nx bug: parent .gitignore files with '*' can cause
+# `nx show projects` to return nothing by ignoring subprojects.
+# See: https://github.com/nrwl/nx/issues/27368
+# Unignore everything to ensure Nx detects all projects
+!*
+
+# ─── Environment & Secrets ────────────────────────────────────────────────────
 .env
 .env.local
 .env.production
@@ -7,51 +13,97 @@ secrets.json
 credentials.json
 service-account.json
 
-# Claude Code personal overrides
+# ─── Claude Code personal overrides ──────────────────────────────────────────
 CLAUDE.local.md
 .claude/settings.local.json
 
-# Dependencies
-node_modules/
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+node_modules
 
-# Build output
-dist/
-build/
-.next/
-out/
+# ─── Build output ─────────────────────────────────────────────────────────────
+dist
+tmp
+out-tsc
+build
+.next
+out
+app-out
 
-# TypeScript
+# ─── TypeScript ───────────────────────────────────────────────────────────────
 *.tsbuildinfo
 
-# Testing
-coverage/
+# ─── Testing ──────────────────────────────────────────────────────────────────
+coverage
 .nyc_output/
 test-results/
 playwright-report/
+test-output
 
-# IDE
+# ─── IDE ──────────────────────────────────────────────────────────────────────
 .vscode/settings.json
-.idea/
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 *.swp
 *.swo
 *~
 
-# OS
+# ─── OS ───────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 
-# Logs
+# ─── Logs ─────────────────────────────────────────────────────────────────────
 *.log
-npm-debug.log*
+npm-debug.log
 yarn-debug.log*
 yarn-error.log*
+testem.log
+/libpeerconnection.log
 
-# Temporary AI research files
+# ─── Nx ───────────────────────────────────────────────────────────────────────
+.nx/cache
+.nx/workspace-data
+
+# ─── Vite / Vitest ────────────────────────────────────────────────────────────
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+.rollup.cache
+
+# ─── Trilium app data ─────────────────────────────────────────────────────────
+apps/*/data
+apps/*/out
+upload
+/result
+.svelte-kit
+
+# ─── Nuklius runtime databases ────────────────────────────────────────────────
+*.db
+*.db-shm
+*.db-wal
+
+# ─── Tessera graph and session state ──────────────────────────────────────────
+.tessera/
+
+# ─── CI smoke logs ────────────────────────────────────────────────────────────
+logs/
+smoke-logs/
+
+# ─── Security scan reports (uploaded as CI artifacts, not committed) ──────────
+security-reports/
+sarif-results/
+
+# ─── pnpm store ───────────────────────────────────────────────────────────────
+.pnpm-store/
+
+# ─── Temporary / research ─────────────────────────────────────────────────────
 _ai_temp/
-
-# MDD working directory (docs, audit notes, reports)
 .mdd/
-
-# Misc
 *.bak
 *.tmp
+/connect.lock
+/typings
+/.sass-cache
