@@ -55,3 +55,26 @@ _ai_temp/
 # Misc
 *.bak
 *.tmp
+
+# Nuklius runtime databases
+*.db
+*.db-shm
+*.db-wal
+
+# Tessera graph and session state
+.tessera/
+
+# CI smoke logs
+logs/
+smoke-logs/
+
+# Security scan reports (uploaded as CI artifacts, not committed)
+security-reports/
+sarif-results/
+
+# pnpm store
+.pnpm-store/
+
+# Electron build outputs
+out/
+app-out/

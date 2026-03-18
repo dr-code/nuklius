@@ -1,0 +1,70 @@
+version: 2
+updates:
+  # pnpm workspace dependencies
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "03:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 10
+    groups:
+      # Batch minor/patch updates by ecosystem area to reduce triage noise
+      trilium-upstream:
+        patterns:
+          - "@trilium/*"
+      ckeditor5:
+        patterns:
+          - "@ckeditor/*"
+          - "ckeditor5*"
+      electron:
+        patterns:
+          - "electron"
+          - "electron-*"
+          - "@electron/*"
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "playwright"
+          - "@playwright/*"
+      security-tooling:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "semgrep*"
+      minor-patch-all:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # Do not auto-update major versions — they require manual review
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    labels:
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # GitHub Actions — update SHAs weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "03:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    groups:
+      actions-all:
+        update-types:
+          - minor
+          - patch
+    labels:
+      - "dependencies"
+      - "ci"
+      - "automated"
+    commit-message:
+      prefix: "chore(ci)"

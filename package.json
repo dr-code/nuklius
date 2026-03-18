@@ -1,0 +1,22 @@
+{
+  "name": "nuklius",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Local-first PKM + learning system for physicians — Trilium fork",
+  "license": "AGPL-3.0-only",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "repro-build": "bash scripts/ci/repro-build.sh",
+    "smoke-launch": "bash scripts/smoke/launch-smoke.sh",
+    "smoke-etapi": "bash scripts/smoke/etapi-crud-smoke.sh",
+    "security-scan": "bash scripts/ci/security-scan.sh",
+    "license-check": "bash scripts/ci/license-policy-check.sh"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-plugin-security": "^3.0.1"
+  }
+}
