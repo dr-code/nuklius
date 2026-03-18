@@ -10,15 +10,14 @@
 | `make security-scan` / `pnpm run security-scan` | Full local security scan suite |
 | `make license-check` / `pnpm run license-check` | AGPL-compatible license policy check |
 
-> Note: `pnpm dev`, `pnpm test`, `pnpm build`, `pnpm typecheck` will be available
-> once the Trilium fork is merged (see `docs/SPRINT-01.md` Step 0 runbook).
+> `pnpm dev`, `pnpm test`, `pnpm build`, `pnpm typecheck` are available — Trilium fork merged (v0.95.0, PR #1).
 
 ## Sprint Status
 
 | Sprint | Status | Gate | Notes |
 |--------|--------|------|-------|
-| Sprint 1 — Fork Baseline + Security CI | In Progress | Pre-Gate A | CI infrastructure complete; awaiting Trilium fork merge |
-| Sprint 2 — Medical Callouts + Domain Packs | Not started | — | |
+| Sprint 1 — Fork Baseline + Security CI | **CLOSED** | Pre-Gate A | TriliumNext/Notes v0.95.0 merged (PR #1); branch protection active; ETAPI_TOKEN set |
+| Sprint 2 — Medical Callouts + Domain Packs | **READY TO START** | — | Use Sprint 2 prompt in docs/SPRINT-01.md |
 | Sprint 3 — Block Addressing | Not started | — | |
 | ... | ... | — | |
 | Sprint 7 | Not started | Gate A | No-AI baseline complete |
@@ -41,14 +40,13 @@
 
 ## Common Gotchas
 
-- **Trilium fork not yet merged:** `apps/`, `packages/`, `pnpm-workspace.yaml` do not exist yet.
-  Smoke tests and full builds will warn/skip gracefully. Run Step 0 in `docs/SPRINT-01.md`.
-- **`.npmrc` blocked by secrets hook:** Create manually — see `docs/SPRINT-01.md` Milestone 1.
-- **ETAPI_TOKEN required for etapi smoke:** `export ETAPI_TOKEN=<token>` before running.
-- **Node version:** `.nvmrc` pins 20.x for CI. Local dev may use newer Node (20+ is fine).
+- **`.npmrc` not committed:** Secrets hook blocks tool writes. Create manually on fresh clones: `frozen-lockfile=true`, `strict-peer-dependencies=false`, `prefer-workspace-packages=true`, `link-workspace-packages=true`.
+- **ETAPI_TOKEN required for etapi smoke:** `export ETAPI_TOKEN=<token>` locally; GitHub Actions secret is set.
+- **Node version:** `.nvmrc` pins `22.16.0` (aligned to TriliumNext upstream). Use `nvm use`.
 - **All Nuklius code under `nuklius/` namespaces:** Never add custom code at Trilium root paths.
-- **ZAP `continue-on-error: true` in Sprint 1:** This is intentional — remove after Trilium fork merge.
-- **pnpm only:** Never run `npm install` or `yarn` in this repo.
+- **ZAP `continue-on-error: true`:** Still present — review and remove once ZAP baseline is established in Sprint CI.
+- **pnpm only:** Never run `npm install` or `yarn` in this repo. `packageManager: pnpm@10.12.1`.
+- **CI evidence URLs:** Pending first Sprint 2 PR run — fill in `docs/SPRINT-01.md` evidence table then.
 
 ## Reference Docs
 
