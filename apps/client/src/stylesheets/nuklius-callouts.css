@@ -1,0 +1,162 @@
+/*
+ * Nuklius callout blocks — shared styles for CKEditor editable and read-only note rendering.
+ *
+ * Callout types: pearl, warning, mnemonic, tip
+ *
+ * Structure:
+ *   <div class="nuklius-callout nuklius-callout--pearl">...</div>
+ */
+
+/* ── Custom properties (defaults for light theme) ─────────────────────────── */
+
+:root {
+    --nuklius-callout-pearl-border:     #0d9488;
+    --nuklius-callout-pearl-bg:         #f0fdfa;
+    --nuklius-callout-pearl-label:      #0f766e;
+
+    --nuklius-callout-warning-border:   #d97706;
+    --nuklius-callout-warning-bg:       #fffbeb;
+    --nuklius-callout-warning-label:    #b45309;
+
+    --nuklius-callout-mnemonic-border:  #7c3aed;
+    --nuklius-callout-mnemonic-bg:      #faf5ff;
+    --nuklius-callout-mnemonic-label:   #6d28d9;
+
+    --nuklius-callout-tip-border:       #16a34a;
+    --nuklius-callout-tip-bg:           #f0fdf4;
+    --nuklius-callout-tip-label:        #15803d;
+
+    --nuklius-callout-radius:           4px;
+    --nuklius-callout-border-width:     4px;
+    --nuklius-callout-padding:          0.75rem 1rem 0.75rem 1.1rem;
+    --nuklius-callout-margin:           1rem 0;
+    --nuklius-callout-label-font-size:  0.7rem;
+    --nuklius-callout-label-weight:     700;
+}
+
+/* ── Dark theme overrides ─────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --nuklius-callout-pearl-bg:       #042f2e;
+        --nuklius-callout-pearl-label:    #5eead4;
+
+        --nuklius-callout-warning-bg:     #2a1a00;
+        --nuklius-callout-warning-label:  #fbbf24;
+
+        --nuklius-callout-mnemonic-bg:    #1e0a3c;
+        --nuklius-callout-mnemonic-label: #c4b5fd;
+
+        --nuklius-callout-tip-bg:         #052e16;
+        --nuklius-callout-tip-label:      #4ade80;
+    }
+}
+
+/* Explicit dark-theme class (Trilium uses .theme-dark on body) */
+body.theme-dark,
+.theme-dark {
+    --nuklius-callout-pearl-bg:       #042f2e;
+    --nuklius-callout-pearl-label:    #5eead4;
+
+    --nuklius-callout-warning-bg:     #2a1a00;
+    --nuklius-callout-warning-label:  #fbbf24;
+
+    --nuklius-callout-mnemonic-bg:    #1e0a3c;
+    --nuklius-callout-mnemonic-label: #c4b5fd;
+
+    --nuklius-callout-tip-bg:         #052e16;
+    --nuklius-callout-tip-label:      #4ade80;
+}
+
+/* ── Base callout block ───────────────────────────────────────────────────── */
+
+.nuklius-callout,
+.ck-content .nuklius-callout {
+    position: relative;
+    margin: var(--nuklius-callout-margin);
+    padding: var(--nuklius-callout-padding);
+    border-radius: var(--nuklius-callout-radius);
+    border-left-style: solid;
+    border-left-width: var(--nuklius-callout-border-width);
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    page-break-inside: avoid;
+}
+
+/* Label badge rendered via ::before pseudo-element */
+.nuklius-callout::before,
+.ck-content .nuklius-callout::before {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: var(--nuklius-callout-label-font-size);
+    font-weight: var(--nuklius-callout-label-weight);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* ── Type: pearl ─────────────────────────────────────────────────────────── */
+
+.nuklius-callout--pearl,
+.ck-content .nuklius-callout--pearl {
+    border-left-color: var(--nuklius-callout-pearl-border);
+    background-color: var(--nuklius-callout-pearl-bg);
+}
+
+.nuklius-callout--pearl::before,
+.ck-content .nuklius-callout--pearl::before {
+    content: "Pearl";
+    color: var(--nuklius-callout-pearl-label);
+}
+
+/* ── Type: warning ──────────────────────────────────────────────────────── */
+
+.nuklius-callout--warning,
+.ck-content .nuklius-callout--warning {
+    border-left-color: var(--nuklius-callout-warning-border);
+    background-color: var(--nuklius-callout-warning-bg);
+}
+
+.nuklius-callout--warning::before,
+.ck-content .nuklius-callout--warning::before {
+    content: "Warning";
+    color: var(--nuklius-callout-warning-label);
+}
+
+/* ── Type: mnemonic ─────────────────────────────────────────────────────── */
+
+.nuklius-callout--mnemonic,
+.ck-content .nuklius-callout--mnemonic {
+    border-left-color: var(--nuklius-callout-mnemonic-border);
+    background-color: var(--nuklius-callout-mnemonic-bg);
+}
+
+.nuklius-callout--mnemonic::before,
+.ck-content .nuklius-callout--mnemonic::before {
+    content: "Mnemonic";
+    color: var(--nuklius-callout-mnemonic-label);
+}
+
+/* ── Type: tip ──────────────────────────────────────────────────────────── */
+
+.nuklius-callout--tip,
+.ck-content .nuklius-callout--tip {
+    border-left-color: var(--nuklius-callout-tip-border);
+    background-color: var(--nuklius-callout-tip-bg);
+}
+
+.nuklius-callout--tip::before,
+.ck-content .nuklius-callout--tip::before {
+    content: "Tip";
+    color: var(--nuklius-callout-tip-label);
+}
+
+/* ── Print: remove background, keep border ──────────────────────────────── */
+
+@media print {
+    .nuklius-callout,
+    .ck-content .nuklius-callout {
+        background-color: transparent !important;
+        border-left-style: solid;
+    }
+}

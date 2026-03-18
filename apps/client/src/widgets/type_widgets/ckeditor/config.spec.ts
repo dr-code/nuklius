@@ -28,4 +28,26 @@ describe("CKEditor config", () => {
         expect([ ...classicToolbarItems ].toSorted())
             .toStrictEqual([...floatingToolbarAllItems ].toSorted());
     });
+
+    it("classic toolbar includes nukliusCallout", () => {
+        function allItems(items: ToolbarConfig[]): string[] {
+            return items.flatMap(item => {
+                if (typeof item === "object" && "items" in item) return allItems(item.items);
+                if (item === "|") return [];
+                return [item];
+            });
+        }
+        const config = buildClassicToolbar(false);
+        expect(allItems(config.toolbar.items as ToolbarConfig[])).toContain("nukliusCallout");
+    });
+
+    it("floating block toolbar includes nukliusCallout", () => {
+        const config = buildFloatingToolbar();
+        const blockItems: string[] = (config.blockToolbar as ToolbarConfig[]).flatMap(item => {
+            if (typeof item === "object" && "items" in item) return item.items.filter((i): i is string => typeof i === "string");
+            if (item === "|") return [];
+            return [item as string];
+        });
+        expect(blockItems).toContain("nukliusCallout");
+    });
 });

@@ -46,6 +46,12 @@ interface CustomGlobals {
     platform?: typeof process.platform;
     linter: typeof lint;
     hasNativeTitleBar: boolean;
+    nukliusDomainPack?: Array<{
+        type: string;
+        label: string;
+        color: string;
+        description: string;
+    }>;
 }
 
 type RequireMethod = (moduleName: string) => any;

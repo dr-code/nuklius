@@ -11,6 +11,20 @@ import packageJson from "../../package.json" with { type: "json" };
 import assetPath from "../services/asset_path.js";
 import appPath from "../services/app_path.js";
 import { generateToken as generateCsrfToken } from "./csrf_protection.js";
+import { getEditorCallouts } from "../services/nuklius/domain_pack_loader.js";
+
+/**
+ * Serializes data to JSON safe for inline <script> tag injection.
+ * Escapes characters that could break out of a script context.
+ */
+function scriptSafeJson(data: unknown): string {
+    return JSON.stringify(data)
+        .replace(/</g, "\\u003c")
+        .replace(/>/g, "\\u003e")
+        .replace(/&/g, "\\u0026")
+        .replace(/\u2028/g, "\\u2028")
+        .replace(/\u2029/g, "\\u2029");
+}
 
 import type { Request, Response } from "express";
 import type BNote from "../becca/entities/bnote.js";
@@ -56,7 +70,10 @@ function index(req: Request, res: Response) {
         maxContentWidth: Math.max(640, parseInt(options.maxContentWidth)),
         triliumVersion: packageJson.version,
         assetPath: assetPath,
-        appPath: appPath
+        appPath: appPath,
+        nukliusCalloutsJson: (() => {
+            try { return scriptSafeJson(getEditorCallouts()); } catch { return "[]"; }
+        })()
     });
 }
 

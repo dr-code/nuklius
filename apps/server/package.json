@@ -256,6 +256,11 @@
               "glob": "**/*",
               "input": "packages/share-theme/src/templates",
               "output": "share-theme/templates"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/server/domain-packs",
+              "output": "domain-packs"
             }
           ]
         }
@@ -317,6 +322,11 @@
               "glob": "**/*",
               "input": "packages/share-theme/src/templates",
               "output": "share-theme/templates"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/server/domain-packs",
+              "output": "domain-packs"
             },
             {
               "glob": "**/*",

@@ -69,6 +69,14 @@ declare module "ckeditor5" {
         },
         clipboard?: {
             copy(text: string): void;
+        },
+        medicalCallout?: {
+            types?: Array<{
+                type: string;
+                label: string;
+                color: string;
+                description: string;
+            }>;
         }
     }
 }
